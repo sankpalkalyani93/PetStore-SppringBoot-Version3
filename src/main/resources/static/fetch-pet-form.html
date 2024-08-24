@@ -2,8 +2,21 @@
 <html lang="en">
 	<head>
 		<title>FetchPetForm</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
 	</head>
 	<body>
+		
+		<header>
+					<nav class="navbar navbar-expand-lg navbar-light bg-light">
+						<ul class="navbar-nav">
+							<li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+							<li class="nav-item"><a class="nav-link" href="aboutus.html">About Us</a></li>
+							<li class="nav-item"><a class="nav-link" href="index.html">Pets</a></li>
+						</ul>
+					</nav>
+				</header>
+				
+		<section>
 		<h2>Fetch Pet By Id</h2>
 		<form id="fetch-pet-form">
 			<label for="pet-id">Pet Id:</label> <br>
@@ -29,6 +42,15 @@
 				<button type="submit">Upadte Pet</button>
 			</form>
 		</div>
+		
+		<div>
+			<h2> The cart elements </h2>
+			<button onclick="fetchCartProducts()">Show cart</button>
+		<div id="cart-products"></div>
+		</div>
+		</section>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.min.js"></script>
+		
 		<script>
 		
 			// fetching the pet by id
@@ -79,13 +101,16 @@
 			fetch(`/api/cart/add/${petId}`, {
 				method: 'POST'
 			})
-			.then(response => {
+			.then(response => response.json()) /*{
 				if(response.ok){
 					alert("pet added to cart");
 				}
 				else{
 					alert("Failed to add pet to cart");
 				}
+			})*/
+			.then(data => {
+				alert(data.message);
 			})
 			.catch(error => console.log("Error : ", error));
 			
@@ -124,6 +149,35 @@
 			})
 			.catch(error => console.log("Error : ", error));
 		});
+		
+		function fetchCartProducts() {
+			fetch(`/api/cart/products`)
+			.then(response => response.json())
+			.then(data => {
+				
+				const cartProductDiv =document.getElementById("cart-products");
+				cartProductDiv.innerHTML='';
+				if(data.pets && data.pets.length > 0) {
+				data.pets.forEach(pet => {
+					const petDiv = document.createElement('div');
+					petDiv.innerHTML = `
+						<h2>Cart Elements</h2>
+						<p>Pet NAme : ${pet.name}</p>
+						<p>Pet Age : ${pet.age}</p>
+						<p>Pet Descritpion : ${pet.description}</p>
+						<p>Pet Price : ${pet.price}</p>
+					`;
+					
+					cartProductDiv.appendChild(petDiv);
+					
+				}); 
+				}else{
+					cartProductDiv.textContent = `No pets in the cart`;
+				}
+			})
+			.catch(error => console.log("Error : ", error));
+			
+		}
 		
 		document.getElementById('fetch-pet-form').addEventListener('submit', function (event){
 			event.preventDefault();

@@ -7,6 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -18,7 +21,12 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToMany
+	@ManyToMany
+	@JoinTable(
+			name="cart_pets",
+			joinColumns = @JoinColumn(name="cart_id"),
+			inverseJoinColumns = @JoinColumn(name="pet_id")
+	)
 	private List<Pet> pets = new ArrayList<>(); 
 	
 	public void addPet(Pet pet) {

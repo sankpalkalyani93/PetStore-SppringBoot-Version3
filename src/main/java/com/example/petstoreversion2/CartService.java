@@ -1,5 +1,7 @@
 package com.example.petstoreversion2;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +14,17 @@ public class CartService {
     @Autowired
     private PetRepository petRepository;
 
-    public void addPetToCart(Long petId) {
+    public Cart addPetToCart(Long cartId, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new RuntimeException("Pet Not Found"));
 
-        Cart cart = cartRepository.findById(1L) // Example: using a fixed cart ID
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    return cartRepository.save(newCart);
-                });
+        Cart cart = cartRepository.findById(cartId).orElse(new Cart());
 
         cart.addPet(pet);
-        cartRepository.save(cart);
+        return cartRepository.save(cart);
+    }
+    
+    public Optional<Cart> getCartById(Long id) {
+    	return cartRepository.findById(id);
     }
 }
