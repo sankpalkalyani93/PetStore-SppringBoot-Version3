@@ -27,4 +27,11 @@ public class CartService {
     public Optional<Cart> getCartById(Long id) {
     	return cartRepository.findById(id);
     }
+    
+    public void clearCart(Long cartId) {
+    	Cart cart = cartRepository.findById(cartId).orElse(new Cart());
+    	cart.getPets().clear();
+    	cartRepository.save(cart);
+  	
+    }
 }
